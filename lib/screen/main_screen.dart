@@ -36,7 +36,7 @@ class _MainScreen extends State<MainScreen> {
     _date = DateTime.now();
     _working = Working.fromDate(_date, time: _defaultTime);
     getDatabasesPath().then((path) {
-      _provider.open(join(path, 'workind.db')).then((dynamic) {
+      _provider.open(join(path, 'working.db')).then((dynamic) {
         _refresh();
       });
     });
