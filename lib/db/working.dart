@@ -1,18 +1,20 @@
 
 import 'package:sqflite/sqflite.dart';
 
-final String tableWorking = "working";
-final String columnId = "_id";
-final String columnYear = "year";
-final String columnMonth = "month";
-final String columnDay = "day";
-final String columnStart = "start";
-final String columnEnd = "end";
-final String columnRest = "rest";
-final String columnDuration = "duration";
-final String columnHoliday = "holiday";
+const String DB_NAME = 'worktime.db';
 
 class Working {
+  static const String TABLE_NAME = 'working';
+  static const String ID = '_id';
+  static const String YEAR = 'year';
+  static const String MONTH = 'month';
+  static const String DAY = 'day';
+  static const String START = 'start';
+  static const String END = 'end';
+  static const String REST = 'rest';
+  static const String DURATION = 'duration';
+  static const String HOLIDAY = 'holiday';
+
   int id;
   int year;
   int month;
@@ -45,9 +47,9 @@ class Working {
     month = date.month;
     day = date.day;
     if (null != time) {
-      start = time[columnStart];
-      end = time[columnEnd];
-      rest = time[columnRest];
+      start = time[START];
+      end = time[END];
+      rest = time[REST];
       if (null != start && null != end && null != rest)
         duration = end - start - rest;
     } else {
@@ -55,6 +57,17 @@ class Working {
     }
   }
 
+  Working.fromMap(Map<String, dynamic> map) {
+    id = map[ID];
+    year = map[YEAR];
+    month = map[MONTH];
+    day = map[DAY];
+    start = map[START];
+    end = map[END];
+    rest = map[REST];
+    duration = map[DURATION];
+    holiday = (map[HOLIDAY] == 'true');
+  }
 
   setTime({double start, double end, double rest}) {
     if (null != start)
@@ -66,40 +79,21 @@ class Working {
     this.duration = this.end - this.start - this.rest;
   }
 
-  setDuration(double duration) {
-    this.duration = duration;
-    this.start = 10.0;
-    this.end = 11.0 + duration;
-    this.rest = 1.0;
-  }
-
   Map<String, dynamic> toMap() {
     var map = <String, dynamic>{
-      columnYear: year,
-      columnMonth: month,
-      columnDay: day,
-      columnStart: start,
-      columnEnd: end,
-      columnRest: rest,
-      columnDuration: duration,
-      columnHoliday: holiday.toString(),
+      YEAR: year,
+      MONTH: month,
+      DAY: day,
+      START: start,
+      END: end,
+      REST: rest,
+      DURATION: duration,
+      HOLIDAY: holiday.toString(),
     };
     if (id != null) {
-      map[columnId] = id;
+      map[ID] = id;
     }
     return map;
-  }
-
-  Working.fromMap(Map<String, dynamic> map) {
-    id = map[columnId];
-    year = map[columnYear];
-    month = map[columnMonth];
-    day = map[columnDay];
-    start = map[columnStart];
-    end = map[columnEnd];
-    rest = map[columnRest];
-    duration = map[columnDuration];
-    holiday = map[columnHoliday] == 'true';
   }
 }
 
@@ -112,41 +106,41 @@ class WorkingProvider {
       version: 2,
       onCreate: (Database database, int version) async {
         await database.execute('''
-          CREATE TABLE $tableWorking (
-            $columnId INTEGER PRIMARY KEY AUTOINCREMENT,
-            $columnYear INTEGER,
-            $columnMonth INTEGER,
-            $columnDay INTEGER,
-            $columnStart REAL,
-            $columnEnd REAL,
-            $columnRest REAL,
-            $columnDuration REAL,
-            $columnHoliday TEXT,
+          CREATE TABLE ${Working.TABLE_NAME} (
+            ${Working.ID} INTEGER PRIMARY KEY AUTOINCREMENT,
+            ${Working.YEAR} INTEGER,
+            ${Working.MONTH} INTEGER,
+            ${Working.DAY} INTEGER,
+            ${Working.START} REAL,
+            ${Working.END} REAL,
+            ${Working.REST} REAL,
+            ${Working.DURATION} REAL,
+            ${Working.HOLIDAY} TEXT,
           UNIQUE (
-            $columnYear,
-            $columnMonth,
-            $columnDay
+            ${Working.YEAR},
+            ${Working.MONTH},
+            ${Working.DAY}
           ))
         ''');
       },
       onUpgrade: (Database database, int oldVersion, int newVersion) async {
         if (oldVersion < newVersion && 2 == newVersion) {
-          await database.execute('ALTER TABLE $tableWorking ADD $columnHoliday TEXT');
+          await database.execute('ALTER TABLE ${Working.TABLE_NAME} ADD ${Working.HOLIDAY} TEXT');
         }
       }
     );
   }
 
   Future<Working> insert(Working working) async {
-    working.id = await database.insert(tableWorking, working.toMap(),
+    working.id = await database.insert(Working.TABLE_NAME, working.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace
     );
     return working;
   }
 
   Future<Working> get(DateTime date) async {
-    List<Map> maps = await database.query(tableWorking,
-        where: "$columnYear = ? AND $columnMonth = ? AND $columnDay = ?",
+    List<Map> maps = await database.query(Working.TABLE_NAME,
+        where: "${Working.YEAR} = ? AND ${Working.MONTH} = ? AND ${Working.DAY} = ?",
         whereArgs: [date.year, date.month, date.day]);
     if (0 < maps.length) {
       return Working.fromMap(maps.first);
@@ -155,18 +149,18 @@ class WorkingProvider {
   }
 
   Future<List> list(DateTime date) async {
-    List<Map> maps = await database.query(tableWorking,
-        where: "$columnYear = ? AND $columnMonth = ?",
+    List<Map> maps = await database.query(Working.TABLE_NAME,
+        where: "${Working.YEAR} = ? AND ${Working.MONTH} = ?",
         whereArgs: [date.year, date.month],
-        orderBy: "$columnDay ASC");
+        orderBy: "${Working.DAY} ASC");
     List<Working> list = List<Working>();
     maps.forEach((it) => list.add(Working.fromMap(it)));
     return list;
   }
 
   delete(DateTime date) async {
-    await database.delete(tableWorking,
-        where: "$columnYear = ? AND $columnMonth = ? AND $columnDay = ?",
+    await database.delete(Working.TABLE_NAME,
+        where: "${Working.YEAR} = ? AND ${Working.MONTH} = ? AND ${Working.DAY} = ?",
         whereArgs: [date.year, date.month, date.day]);
   }
 }

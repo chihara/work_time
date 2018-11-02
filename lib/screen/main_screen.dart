@@ -29,14 +29,14 @@ class _MainScreen extends State<MainScreen> {
   void initState() {
     super.initState();
     _defaultTime = <String, double>{
-      columnStart: _settings.start,
-      columnEnd: _settings.end,
-      columnRest: _settings.rest,
+      Working.START: _settings.start,
+      Working.END: _settings.end,
+      Working.REST: _settings.rest,
     };
     _date = DateTime.now();
     _working = Working.fromDate(_date, time: _defaultTime);
     getDatabasesPath().then((path) {
-      _provider.open(join(path, 'working.db')).then((dynamic) {
+      _provider.open(join(path, DB_NAME)).then((dynamic) {
         _refresh();
       });
     });
@@ -73,9 +73,9 @@ class _MainScreen extends State<MainScreen> {
               );
               if (null != event && 'saved' == event) {
                 _defaultTime = <String, double>{
-                  columnStart: _settings.start,
-                  columnEnd: _settings.end,
-                  columnRest: _settings.rest,
+                  Working.START: _settings.start,
+                  Working.END: _settings.end,
+                  Working.REST: _settings.rest,
                 };
                 _refresh();
               }
