@@ -48,11 +48,11 @@ class MonthlyListState extends State<MonthlyList> {
           child: Text('No Data'),
       );
     } else {
-      return _getListView();
+      return _buildListView();
     }
   }
 
-  Widget _getListView() {
+  Widget _buildListView() {
     return ListView.builder(
         padding: EdgeInsets.symmetric(vertical: 16.0),
         itemBuilder: (BuildContext context, int index) {
@@ -60,9 +60,7 @@ class MonthlyListState extends State<MonthlyList> {
           if (length <= index) {
             return null;
           } else {
-            return DailyItem(
-                _list[index]
-            );
+            return DailyItem(_list[index]);
           }
         },
       controller: _controller,

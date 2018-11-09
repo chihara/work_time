@@ -2,6 +2,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:working/screen/main_screen.dart';
 import 'package:working/settings/settings.dart';
 
 /// スプラッシュ画面
@@ -12,17 +13,14 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreen extends State<SplashScreen> {
   final Settings _settings = Settings();
-  bool initialized = false;
-  bool expired = false;
+  bool _initialized = false;
+  bool _expired = false;
 
   @override
   void initState() {
-    _settings.load(() {
-      initialized = true;
-      _moveToMainScreen();
-    });
-    _startTimer();
     super.initState();
+    _initialize();
+    _startTimer();
   }
 
   @override
@@ -51,18 +49,28 @@ class _SplashScreen extends State<SplashScreen> {
     );
   }
 
+  // 初期化処理
+  _initialize() {
+    _settings.load(() {
+      _initialized = true;
+      _moveToMainScreen();
+    });
+  }
+
   // スプラッシュ画面を終了させるタイマーを開始する
   _startTimer() async {
     Timer(Duration(seconds: 2), () {
-      expired = true;
+      _expired = true;
       _moveToMainScreen();
     });
   }
 
   // スプラッシュ画面をメイン画面に置き換えて遷移する
   _moveToMainScreen() {
-    if (initialized && expired) {
-      Navigator.pushReplacementNamed(context, '/MainScreen');
+    if (_initialized && _expired) {
+      Navigator.pushReplacement(context, MaterialPageRoute(
+          builder: (context) => MainScreen()
+      ));
     }
   }
 }

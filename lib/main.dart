@@ -1,9 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:working/screen/main_screen.dart';
 import 'package:working/screen/splash_screen.dart';
-import 'package:working/settings/settings.dart';
 
 void main() {
   debugPaintSizeEnabled = false;
@@ -28,9 +26,6 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.indigo,
       ),
       home: SplashScreen(),
-      routes: <String, WidgetBuilder>{
-        '/MainScreen': (BuildContext context) => new MainScreen()
-      },
     );
   }
 }

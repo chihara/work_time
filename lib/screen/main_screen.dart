@@ -54,12 +54,9 @@ class _MainScreen extends State<MainScreen> {
           IconButton(
             icon: Icon(Icons.list),
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
+              Navigator.push(context, MaterialPageRoute(
                   builder: (context) => MonthlyScreen(_date, _list, _provider)
-                )
-              );
+              ));
             },
           ),
           IconButton(
@@ -153,7 +150,7 @@ class _MainScreen extends State<MainScreen> {
                     child: Text(
                       (_working.id == null ? 'Submit' : 'Update'),
                       style: TextStyle(
-                        color: Theme.of(context).primaryColor
+                        color: _working.id == null ? Theme.of(context).primaryColor : Colors.cyan,
                       ),
                     ),
                     onPressed: () {
@@ -175,6 +172,12 @@ class _MainScreen extends State<MainScreen> {
     if (_working.holiday) {
       return Container();
     } else {
+      final theme = SliderThemeData.fromPrimaryColors(
+          primaryColor: Colors.cyan,
+          primaryColorDark: Colors.cyan[700],
+          primaryColorLight: Colors.cyan[300],
+          valueIndicatorTextStyle: TextStyle(color: Colors.white)
+      );
       return HourRangeSlider(
         _working.start,
         _working.end,
@@ -183,6 +186,7 @@ class _MainScreen extends State<MainScreen> {
         340.0,
         label: 'Work ${_working.duration.toStringAsFixed(2)} h',
         divisions: 64,
+        sliderTheme: _working.id == null ? null : theme,
         onChanged: (lower, upper) {
           setState(() {
             _working.setTime(start: lower, end: upper);
