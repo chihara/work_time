@@ -84,7 +84,7 @@ class _MainScreen extends State<MainScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Padding(
-            padding: EdgeInsets.only(top: 50.0),
+            padding: EdgeInsets.only(top: 30.0),
             child: Calendar(
               onDateSelected: (date) {
                 _date = date;
