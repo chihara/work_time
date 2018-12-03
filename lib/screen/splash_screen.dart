@@ -31,8 +31,8 @@ class _SplashScreen extends State<SplashScreen> with TickerProviderStateMixin{
         color: Theme.of(context).primaryColor,
         child: Center(
           child: AnimatedSize(
-            curve: Curves.linear,
-            duration: Duration(seconds: 1),
+            curve: Curves.easeInOut,
+            duration: Duration(milliseconds: 1300),
             vsync: this,
             child: Container(
               height: _logoHeight,
