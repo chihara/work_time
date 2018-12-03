@@ -5,13 +5,16 @@ import 'package:intl/intl.dart';
 class CalendarUtil {
 
   // 指定した月の平日のみのリストを取得する
-  static List<DateTime> getWeekdays(DateTime date) {
+  static List<DateTime> getWeekdays(DateTime date, {
+    List<String> companyHolidays = const [],
+  }) {
     DateTime day = DateTime(date.year, date.month, 1, 0, 0, 0);
     List<DateTime> list = [];
     for (int i = 0; i < 31; ++i) {
       if (DateTime.saturday != day.weekday &&
           DateTime.sunday != day.weekday &&
-          !isNationalHoliday(day)) {
+          !isNationalHoliday(day) &&
+          !companyHolidays.contains(DateFormat('yyyy/MM/dd').format(day))) {
         list.add(day);
       }
       day = DateTime(day.year, day.month, day.day + 1);

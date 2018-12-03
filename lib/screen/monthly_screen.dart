@@ -11,11 +11,13 @@ import 'package:working/widget/monthly_list.dart';
 class MonthlyScreen extends StatefulWidget {
   final DateTime date;
   final List<Working> list;
+  final List<String> companyHolidays;
   final WorkingProvider provider;
 
   MonthlyScreen(
     this.date,
     this.list,
+    this.companyHolidays,
     this.provider
   ): super(key: ObjectKey(date));
 
@@ -39,7 +41,7 @@ class _MonthlyScreen extends State<MonthlyScreen> {
     super.initState();
     _date = DateTime(widget.date.year, widget.date.month, 1);
     _list = widget.list;
-    _weekdays = CalendarUtil.getWeekdays(_date);
+    _weekdays = CalendarUtil.getWeekdays(_date, companyHolidays: widget.companyHolidays);
     _sum = _sumWorkingTime(_list);
     _surplus = (_weekdays.length - 20) * _settings.hoursPerDay;
     _createEstimations();
@@ -49,7 +51,7 @@ class _MonthlyScreen extends State<MonthlyScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('MonthlySpreadsheet'),
+        title: Text('Monthly Spreadsheet'),
       ),
       body: Column(
           children: <Widget>[
@@ -117,7 +119,7 @@ class _MonthlyScreen extends State<MonthlyScreen> {
                           setState(() {
                             _list = v;
                             _sum = _sumWorkingTime(_list);
-                            _weekdays = CalendarUtil.getWeekdays(_date);
+                            _weekdays = CalendarUtil.getWeekdays(_date, companyHolidays: widget.companyHolidays);
                             _surplus = (_weekdays.length - 20) * _settings.hoursPerDay;
                             _chartKey.currentState.updateData(
                               _createChartData(_sum, (_list.length * _settings.hoursPerDay) - _surplus)
@@ -138,7 +140,7 @@ class _MonthlyScreen extends State<MonthlyScreen> {
                           setState(() {
                             _list = v;
                             _sum = _sumWorkingTime(_list);
-                            _weekdays = CalendarUtil.getWeekdays(_date);
+                            _weekdays = CalendarUtil.getWeekdays(_date, companyHolidays: widget.companyHolidays);
                             _surplus = (_weekdays.length - 20) * _settings.hoursPerDay;
                             _chartKey.currentState.updateData(
                               _createChartData(_sum, (_list.length * _settings.hoursPerDay) - _surplus)

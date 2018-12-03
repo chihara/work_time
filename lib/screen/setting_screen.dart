@@ -46,99 +46,101 @@ class _SettingScreen extends State<SettingScreen> {
     );
     return Container(
       color: Colors.white,
-      padding: EdgeInsets.all(16.0),
       constraints: BoxConstraints.expand(),
       child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Row(
-              children: <Widget>[
-                Icon(Icons.calendar_today),
-                Padding(
-                  padding: EdgeInsets.only(left: 16.0),
-                  child: Text('Monthly', style: _textStyle,),
-                ),
-              ],
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 8.0),
-              child: Divider(),
-            ),
-            HourSlider(
-              _settings.hoursPerMonth,
-              0.0,
-              200.0,
-              260.0,
-              label: 'Duration ${_settings.hoursPerMonth.toStringAsFixed(0)} h',
-              divisions: 200,
-              sliderTheme: _sliderTheme,
-              onChanged: (v) {
-                setState(() {
-                  _settings.hoursPerMonth = v;
-                });
-              },
-            ),
-            Padding(padding: EdgeInsets.symmetric(vertical: 16.0),),
-            Row(
-              children: <Widget>[
-                Icon(Icons.access_time),
-                Padding(
-                  padding: EdgeInsets.only(left: 16.0),
-                  child: Text('Daily', style: _textStyle,),
-                ),
-              ],
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 8.0),
-              child: Divider(),
-            ),
-            HourSlider(
-              _settings.start,
-              0.0,
-              24.0,
-              260.0,
-              label: 'Start ${_convertTime(_settings.start)}',
-              divisions: 96,
-              sliderTheme: _sliderTheme,
-              onChanged: (v) {
-                setState(() {
-                  _settings.set(start: v);
-                });
-              },
-            ),
-            Padding(padding: EdgeInsets.symmetric(vertical: 8.0),),
-            HourSlider(
-              _settings.end,
-              0.0,
-              24.0,
-              260.0,
-              label: 'End ${_convertTime(_settings.end)}',
-              divisions: 96,
-              sliderTheme: _sliderTheme,
-              onChanged: (v) {
-                setState(() {
-                  _settings.set(end: v);
-                });
-              },
-            ),
-            Padding(padding: EdgeInsets.symmetric(vertical: 8.0),),
-            HourSlider(
-              _settings.rest,
-              0.0,
-              3.0,
-              260.0,
-              label: 'Rest ${_settings.rest.toStringAsFixed(2)} h',
-              divisions: 12,
-              sliderTheme: _sliderTheme,
-              onChanged: (v) {
-                setState(() {
-                  _settings.set(rest: v);
-                });
-              },
-            ),
-          ],
+        child: Container(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  Icon(Icons.calendar_today),
+                  Padding(
+                    padding: EdgeInsets.only(left: 16.0),
+                    child: Text('Monthly', style: _textStyle,),
+                  ),
+                ],
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 8.0),
+                child: Divider(),
+              ),
+              HourSlider(
+                _settings.hoursPerMonth,
+                0.0,
+                200.0,
+                260.0,
+                label: 'Duration ${_settings.hoursPerMonth.toStringAsFixed(0)} h',
+                divisions: 200,
+                sliderTheme: _sliderTheme,
+                onChanged: (v) {
+                  setState(() {
+                    _settings.hoursPerMonth = v;
+                  });
+                },
+              ),
+              Padding(padding: EdgeInsets.only(top: 16.0),),
+              Row(
+                children: <Widget>[
+                  Icon(Icons.access_time),
+                  Padding(
+                    padding: EdgeInsets.only(left: 16.0),
+                    child: Text('Daily', style: _textStyle,),
+                  ),
+                ],
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 8.0),
+                child: Divider(),
+              ),
+              HourSlider(
+                _settings.start,
+                0.0,
+                24.0,
+                260.0,
+                label: 'Start ${_convertTime(_settings.start)}',
+                divisions: 96,
+                sliderTheme: _sliderTheme,
+                onChanged: (v) {
+                  setState(() {
+                    _settings.set(start: v);
+                  });
+                },
+              ),
+              Padding(padding: EdgeInsets.only(top: 8.0),),
+              HourSlider(
+                _settings.end,
+                0.0,
+                24.0,
+                260.0,
+                label: 'End ${_convertTime(_settings.end)}',
+                divisions: 96,
+                sliderTheme: _sliderTheme,
+                onChanged: (v) {
+                  setState(() {
+                    _settings.set(end: v);
+                  });
+                },
+              ),
+              Padding(padding: EdgeInsets.only(top: 8.0),),
+              HourSlider(
+                _settings.rest,
+                0.0,
+                3.0,
+                260.0,
+                label: 'Rest ${_settings.rest.toStringAsFixed(2)} h',
+                divisions: 12,
+                sliderTheme: _sliderTheme,
+                onChanged: (v) {
+                  setState(() {
+                    _settings.set(rest: v);
+                  });
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
