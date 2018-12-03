@@ -11,10 +11,11 @@ class SplashScreen extends StatefulWidget {
   State<StatefulWidget> createState() => _SplashScreen();
 }
 
-class _SplashScreen extends State<SplashScreen> {
+class _SplashScreen extends State<SplashScreen> with TickerProviderStateMixin{
   final Settings _settings = Settings();
   bool _initialized = false;
   bool _expired = false;
+  double _logoHeight = 0.0;
 
   @override
   void initState() {
@@ -29,20 +30,29 @@ class _SplashScreen extends State<SplashScreen> {
       body: Container(
         color: Theme.of(context).primaryColor,
         child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Icon(Icons.access_time, size: 140.0, color: Colors.white,),
-              Padding(
-                padding: EdgeInsets.only(top: 16.0),
-                child: Text('WorkTime',
-                  style: TextStyle(
-                    fontSize: 22.0,
-                    color: Colors.white,
+          child: AnimatedSize(
+            curve: Curves.linear,
+            duration: Duration(seconds: 1),
+            vsync: this,
+            child: Container(
+              height: _logoHeight,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Icon(Icons.access_time, size: 140.0, color: Colors.white,),
+                  Padding(
+                    padding: EdgeInsets.only(top: 16.0),
+                    child: Text('WorkTime',
+                      style: TextStyle(
+                        fontSize: 22.0,
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),
@@ -62,6 +72,11 @@ class _SplashScreen extends State<SplashScreen> {
     Timer(Duration(seconds: 2), () {
       _expired = true;
       _moveToMainScreen();
+    });
+    Timer(Duration(milliseconds: 500), () {
+      setState(() {
+        _logoHeight = 200.0;
+      });
     });
   }
 
