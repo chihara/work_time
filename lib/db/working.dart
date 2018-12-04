@@ -152,7 +152,7 @@ class WorkingProvider {
 
   Future<List> list(DateTime date) async {
     List<Map> maps = await _db.query(Working.TABLE_NAME,
-        where: '${Working.YEAR} = ? AND ${Working.MONTH} = ? AND ${Working.COMPANY_HOLIDAY} <> ?',
+        where: '${Working.YEAR} = ? AND ${Working.MONTH} = ? AND (${Working.COMPANY_HOLIDAY} <> ? OR ${Working.COMPANY_HOLIDAY} IS NULL)',
         whereArgs: [date.year, date.month, 'true'],
         orderBy: '${Working.DAY} ASC');
     List<Working> list = [];
