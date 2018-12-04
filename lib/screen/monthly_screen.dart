@@ -42,8 +42,7 @@ class _MonthlyScreen extends State<MonthlyScreen> {
     _date = DateTime(widget.date.year, widget.date.month, 1);
     _list = widget.list;
     _weekdays = CalendarUtil.getWeekdays(_date, companyHolidays: widget.companyHolidays);
-    _sum = _sumWorkingTime(_list);
-    _surplus = (_weekdays.length - 20) * _settings.hoursPerDay;
+    _calculate();
     _createEstimations();
   }
 
@@ -93,7 +92,7 @@ class _MonthlyScreen extends State<MonthlyScreen> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
-                    Difference(_sum - (_list.length * _settings.hoursPerDay) + _surplus),
+                    Difference(_surplus),
                     Text(
                       '$_sum h',
                       style: TextStyle(
@@ -118,12 +117,8 @@ class _MonthlyScreen extends State<MonthlyScreen> {
                         widget.provider.list(_date).then((v) {
                           setState(() {
                             _list = v;
-                            _sum = _sumWorkingTime(_list);
                             _weekdays = CalendarUtil.getWeekdays(_date, companyHolidays: widget.companyHolidays);
-                            _surplus = (_weekdays.length - 20) * _settings.hoursPerDay;
-                            _chartKey.currentState.updateData(
-                              _createChartData(_sum, (_list.length * _settings.hoursPerDay) - _surplus)
-                            );
+                            _calculate();
                             _createEstimations();
                             _monthlyListKey.currentState.update(_list, _estimations);
                             _monthlyListKey.currentState.scrollToTop();
@@ -139,12 +134,8 @@ class _MonthlyScreen extends State<MonthlyScreen> {
                         widget.provider.list(_date).then((v) {
                           setState(() {
                             _list = v;
-                            _sum = _sumWorkingTime(_list);
                             _weekdays = CalendarUtil.getWeekdays(_date, companyHolidays: widget.companyHolidays);
-                            _surplus = (_weekdays.length - 20) * _settings.hoursPerDay;
-                            _chartKey.currentState.updateData(
-                              _createChartData(_sum, (_list.length * _settings.hoursPerDay) - _surplus)
-                            );
+                            _calculate();
                             _createEstimations();
                             _monthlyListKey.currentState.update(_list, _estimations);
                             _monthlyListKey.currentState.scrollToTop();
@@ -157,7 +148,7 @@ class _MonthlyScreen extends State<MonthlyScreen> {
               ],
             ),
             Center(
-              child: _buildCircularChart(_sum, (_list.length * _settings.hoursPerDay) - _surplus),
+              child: _buildCircularChart(),
             ),
           ],
         ),
@@ -198,16 +189,23 @@ class _MonthlyScreen extends State<MonthlyScreen> {
     }
   }
 
+  _calculate() {
+    _sum = _sumWorkingTime(_list);
+    _surplus = _sum + ((_weekdays.length - _list.length) * _settings.hoursPerDay) - _settings.hoursPerMonth;
+  }
+
   // 円グラフwidgetの構築する
-  Widget _buildCircularChart(double actual, double fixed) {
+  Widget _buildCircularChart() {
+    List<CircularStackEntry> data = _createChartData();
+    _chartKey.currentState?.updateData(data);
     return AnimatedCircularChart(
       key: _chartKey,
       size: Size(120.0, 120.0),
       chartType: CircularChartType.Radial,
       edgeStyle: SegmentEdgeStyle.round,
       percentageValues: true,
-      initialChartData: _createChartData(actual, fixed),
-      holeLabel: '${(actual / _settings.hoursPerMonth * 100).toStringAsFixed(2)} %',
+      initialChartData: data,
+      holeLabel: '${(_sum / _settings.hoursPerMonth * 100).toStringAsFixed(2)} %',
       labelStyle: TextStyle(
         color: Colors.black87,
         fontSize: 16.0
@@ -217,52 +215,24 @@ class _MonthlyScreen extends State<MonthlyScreen> {
 
   // 円グラフに渡すデータを生成する
   // stackに追加した順に上から重なる、最初に追加したデータがtopになるので注意
-  List<CircularStackEntry> _createChartData(double actual, double fixed) {
-    double progressActual = actual / _settings.hoursPerMonth * 100;
-    double progressFixed = fixed / _settings.hoursPerMonth * 100;
+  List<CircularStackEntry> _createChartData() {
+    double progressActual = _sum / _settings.hoursPerMonth * 100;
+    double progressSurplus = (_surplus / _settings.hoursPerMonth * 100).abs();
     List<CircularSegmentEntry> stack = [];
-    if (0.0 == actual) {
+    stack.add(CircularSegmentEntry(
+      progressActual,
+      Theme.of(context).primaryColor
+    ));
+    if (100.0 > progressActual) {
       stack.add(CircularSegmentEntry(
-          100.0,
-          Colors.black12
+        progressSurplus,
+        0.0 > _surplus ? Colors.orange : Colors.cyan,
       ));
-    } else if (fixed < actual) {
-      // 余剰がある場合、余剰分を色を変えて表示
+    }
+    if (100.0 > (progressActual + progressSurplus)) {
       stack.add(CircularSegmentEntry(
-          progressFixed,
-          Theme.of(context).primaryColor
-      ));
-      stack.add(CircularSegmentEntry(
-          (progressActual - progressFixed),
-          Colors.cyan
-      ));
-      stack.add(CircularSegmentEntry(
-          100.0,
-          Colors.black12
-      ));
-    } else if (fixed > actual) {
-      // 不足がある場合、不足分を色を変えて表示
-      stack.add(CircularSegmentEntry(
-          progressActual,
-          Theme.of(context).primaryColor
-      ));
-      stack.add(CircularSegmentEntry(
-          (progressFixed - progressActual),
-          Colors.orange
-      ));
-      stack.add(CircularSegmentEntry(
-          100.0,
-          Colors.black12
-      ));
-    } else {
-      // 余剰も不足も無ければそのまま
-      stack.add(CircularSegmentEntry(
-          progressActual,
-          Theme.of(context).primaryColor
-      ));
-      stack.add(CircularSegmentEntry(
-          100.0,
-          Colors.black12
+        100.0 - progressActual - progressSurplus,
+        Colors.black12
       ));
     }
     return <CircularStackEntry>[CircularStackEntry(stack)];
