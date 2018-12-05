@@ -182,11 +182,11 @@ class _MainScreen extends State<MainScreen> {
       return Container(
         padding: EdgeInsets.symmetric(horizontal: 16.0),
         child: HourRangeSlider(
-          _working.start,
-          _working.end,
-          8.0,
-          24.0,
-          340.0,
+          lowerValue: _working.start,
+          upperValue: _working.end,
+          min: 8.0,
+          max: 24.0,
+          width: 340.0,
           label: 'Work ${_working.duration.toStringAsFixed(2)} h',
           divisions: 64,
           sliderTheme: _working.id == null ? null : theme,
@@ -206,12 +206,12 @@ class _MainScreen extends State<MainScreen> {
       return Container();
     } else {
       return HourSlider(
-        _working.rest,
-        0.0,
-        3.0,
-        230.0,
+        value: _working.rest,
+        min: 0.0,
+        max: 4.0,
+        width: 230.0,
         label: 'Rest ${_working.rest.toStringAsFixed(2)} h',
-        divisions: 12,
+        divisions: 16,
         sliderTheme: SliderThemeData.fromPrimaryColors(
           primaryColor: Color.fromARGB(0xff, 0x80, 0x80, 0x80),
           primaryColorDark: Color.fromARGB(0xff, 0x60, 0x60, 0x60),

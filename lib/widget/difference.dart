@@ -6,7 +6,11 @@ class Difference extends StatefulWidget {
   final double value;
   final bool inactivated;
 
-  Difference(this.value, {this.inactivated = false, Key key}): super(key: key);
+  Difference({
+    Key key,
+    @required this.value,
+    this.inactivated = false
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _Difference();

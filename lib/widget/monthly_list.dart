@@ -8,7 +8,11 @@ class MonthlyList extends StatefulWidget {
   final List<Working> list;
   final List<Working> estimations;
 
-  MonthlyList(this.list, this.estimations, {Key key}) : super (key: key);
+  MonthlyList({
+    Key key,
+    @required this.list,
+    @required this.estimations,
+  }) : super (key: key);
 
   @override
   State<StatefulWidget> createState() => MonthlyListState();
@@ -60,7 +64,7 @@ class MonthlyListState extends State<MonthlyList> {
           if (length <= index) {
             return null;
           } else {
-            return DailyItem(_list[index]);
+            return DailyItem(working: _list[index]);
           }
         },
       controller: _controller,

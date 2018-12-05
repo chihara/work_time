@@ -14,21 +14,19 @@ class BarChart extends StatefulWidget {
   final double lineWidth;
   final bool inactivated;
 
-  BarChart(
-      this.value,
-      this.border,
-      this.max,
-      {
-        this.baseColor = Colors.black12,
-        this.mainColor = Colors.indigo,
-        this.overColor = Colors.cyan,
-        this.shortColor = Colors.orange,
-        this.inactiveColor = Colors.black38,
-        this.lineWidth = 6.0,
-        this.inactivated = false,
-        Key key,
-      }
-      ): super(key: key);
+  BarChart({
+    Key key,
+    @required this.value,
+    @required this.border,
+    @required this.max,
+    this.baseColor = Colors.black12,
+    this.mainColor = Colors.indigo,
+    this.overColor = Colors.cyan,
+    this.shortColor = Colors.orange,
+    this.inactiveColor = Colors.black38,
+    this.lineWidth = 6.0,
+    this.inactivated = false,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _BarChart();

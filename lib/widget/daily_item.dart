@@ -9,7 +9,9 @@ import 'package:working/widget/difference.dart';
 class DailyItem extends StatefulWidget {
   final Working working;
 
-  DailyItem(this.working) : super (key: new ObjectKey(working));
+  DailyItem({
+    @required this.working
+  }) : super (key: ObjectKey(working));
 
   @override
   State<StatefulWidget> createState() => _DailyItem();
@@ -44,10 +46,10 @@ class _DailyItem extends State<DailyItem> {
             mainAxisSize: MainAxisSize.max,
             children: <Widget>[
               BarChart(
-                  widget.working.duration,
-                  _settings.hoursPerDay,
-                  16.0,
-                  inactivated: widget.working.estimated
+                value: widget.working.duration,
+                border: _settings.hoursPerDay,
+                max: 16.0,
+                inactivated: widget.working.estimated
               ),
             ],
           ),
@@ -55,8 +57,8 @@ class _DailyItem extends State<DailyItem> {
             width: 50.0,
             child: Center(
               child: Difference(
-                  (widget.working.duration - _settings.hoursPerDay),
-                  inactivated: widget.working.estimated
+                value: (widget.working.duration - _settings.hoursPerDay),
+                inactivated: widget.working.estimated
               ),
             ),
           ),

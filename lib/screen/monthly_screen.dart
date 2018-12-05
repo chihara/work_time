@@ -53,12 +53,16 @@ class _MonthlyScreen extends State<MonthlyScreen> {
         title: Text('Monthly Spreadsheet'),
       ),
       body: Column(
-          children: <Widget>[
-            _buildAggregatePane(),
-            Expanded(
-              child: MonthlyList(_list, _estimations, key: _monthlyListKey)
-            )
-          ]
+        children: <Widget>[
+          _buildAggregatePane(),
+          Expanded(
+            child: MonthlyList(
+              key: _monthlyListKey,
+              list: _list,
+              estimations: _estimations,
+            ),
+          )
+        ]
       ),
     );
   }
@@ -92,7 +96,9 @@ class _MonthlyScreen extends State<MonthlyScreen> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
-                    Difference(_surplus),
+                    Difference(
+                      value: _surplus
+                    ),
                     Text(
                       '$_sum h',
                       style: TextStyle(

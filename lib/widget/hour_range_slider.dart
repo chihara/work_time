@@ -17,22 +17,19 @@ class HourRangeSlider extends StatefulWidget {
   final SliderThemeData sliderTheme;
   final OnChanged onChanged;
 
-  HourRangeSlider(
-      this.lowerValue,
-      this.upperValue,
-      this.min,
-      this.max,
-      this.width,
-      {
-        this.label,
-        this.divisions,
-        this.sliderTheme,
-        this.onChanged,
-        Key key,
-      }
-  ): super(key: key) {
-    assert(0 != divisions);
-  }
+  HourRangeSlider({
+    Key key,
+    @required this.lowerValue,
+    @required this.upperValue,
+    @required this.min,
+    @required this.max,
+    @required this.width,
+    this.label,
+    this.divisions,
+    this.sliderTheme,
+    this.onChanged,
+  }) : assert(0 != divisions),
+       super(key: key);
 
   @override
   State<StatefulWidget> createState() => _HourRangeSlider();
