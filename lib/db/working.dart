@@ -130,6 +130,9 @@ class WorkingProvider {
     }
     if (3 > oldVersion && 3 <= newVersion) {
       await db.execute('ALTER TABLE ${Working.TABLE_NAME} ADD ${Working.COMPANY_HOLIDAY} TEXT');
+      await db.update(Working.TABLE_NAME, {Working.COMPANY_HOLIDAY: 'false'},
+        where: '${Working.COMPANY_HOLIDAY} IS NULL'
+      );
     }
   }
 
@@ -152,8 +155,8 @@ class WorkingProvider {
 
   Future<List> list(DateTime date) async {
     List<Map> maps = await _db.query(Working.TABLE_NAME,
-        where: '${Working.YEAR} = ? AND ${Working.MONTH} = ? AND (${Working.COMPANY_HOLIDAY} <> ? OR ${Working.COMPANY_HOLIDAY} IS NULL)',
-        whereArgs: [date.year, date.month, 'true'],
+        where: '${Working.YEAR} = ? AND ${Working.MONTH} = ? AND ${Working.COMPANY_HOLIDAY} = ?',
+        whereArgs: [date.year, date.month, 'false'],
         orderBy: '${Working.DAY} ASC');
     List<Working> list = [];
     maps.forEach((it) => list.add(Working.fromMap(it)));
