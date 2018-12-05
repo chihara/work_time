@@ -115,8 +115,7 @@ class _MainScreen extends State<MainScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              _buildInputDurationSlider(),
-              _buildInputRestSlider(),
+              _buildInputSliders(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
@@ -168,63 +167,78 @@ class _MainScreen extends State<MainScreen> {
     );
   }
 
-  // 勤務時間入力スライダーwidgetを構築する
-  Widget _buildInputDurationSlider() {
+  // 休暇状態を判断して時間入力スライダーwidgetを構築する
+  Widget _buildInputSliders() {
     if (_working.holiday || _working.companyHoliday) {
       return Container();
     } else {
-      final theme = SliderThemeData.fromPrimaryColors(
-          primaryColor: Colors.cyan,
-          primaryColorDark: Colors.cyan[700],
-          primaryColorLight: Colors.cyan[300],
-          valueIndicatorTextStyle: TextStyle(color: Colors.white)
-      );
       return Container(
-        padding: EdgeInsets.symmetric(horizontal: 16.0),
-        child: HourRangeSlider(
-          lowerValue: _working.start,
-          upperValue: _working.end,
-          min: 8.0,
-          max: 24.0,
-          width: 340.0,
-          label: 'Work ${_working.duration.toStringAsFixed(2)} h',
-          divisions: 64,
-          sliderTheme: _working.id == null ? null : theme,
-          onChanged: (lower, upper) {
-            setState(() {
-              _working.setTime(start: lower, end: upper);
-            });
-          },
+        height: 160.0,
+        child: Stack(
+          children: <Widget>[
+            _buildInputDurationSlider(),
+            Positioned(
+              left: 0.0,
+              right: 0.0,
+              bottom: 0.0,
+              child: _buildInputRestSlider(),
+            ),
+          ],
         ),
       );
     }
   }
 
+  // 勤務時間入力スライダーwidgetを構築する
+  Widget _buildInputDurationSlider() {
+    final theme = SliderThemeData.fromPrimaryColors(
+        primaryColor: Colors.cyan,
+        primaryColorDark: Colors.cyan[700],
+        primaryColorLight: Colors.cyan[300],
+        valueIndicatorTextStyle: TextStyle(color: Colors.white)
+    );
+    return Container(
+      height: 115.0,
+      padding: EdgeInsets.symmetric(horizontal: 16.0),
+      child: HourRangeSlider(
+        lowerValue: _working.start,
+        upperValue: _working.end,
+        min: 8.0,
+        max: 24.0,
+        width: 340.0,
+        label: 'Work ${_working.duration.toStringAsFixed(2)} h',
+        divisions: 64,
+        sliderTheme: _working.id == null ? null : theme,
+        onChanged: (lower, upper) {
+          setState(() {
+            _working.setTime(start: lower, end: upper);
+          });
+        },
+      ),
+    );
+  }
+
   // 休憩時間入力スライダーwidgetを構築する
   Widget _buildInputRestSlider() {
-    if (_working.holiday || _working.companyHoliday) {
-      return Container();
-    } else {
-      return HourSlider(
-        value: _working.rest,
-        min: 0.0,
-        max: 4.0,
-        width: 230.0,
-        label: 'Rest ${_working.rest.toStringAsFixed(2)} h',
-        divisions: 16,
-        sliderTheme: SliderThemeData.fromPrimaryColors(
+    return HourSlider(
+      value: _working.rest,
+      min: 0.0,
+      max: 4.0,
+      width: 230.0,
+      label: 'Rest ${_working.rest.toStringAsFixed(2)} h',
+      divisions: 16,
+      sliderTheme: SliderThemeData.fromPrimaryColors(
           primaryColor: Color.fromARGB(0xff, 0x80, 0x80, 0x80),
           primaryColorDark: Color.fromARGB(0xff, 0x60, 0x60, 0x60),
           primaryColorLight: Color.fromARGB(0xff, 0xa0, 0xa0, 0xa0),
           valueIndicatorTextStyle: TextStyle(color: Colors.white)
-        ),
-        onChanged: (v) {
-          setState(() {
-            _working.setTime(rest: v);
-          });
-        },
-      );
-    }
+      ),
+      onChanged: (v) {
+        setState(() {
+          _working.setTime(rest: v);
+        });
+      },
+    );
   }
 
   Widget _buildSubmitButton() {
