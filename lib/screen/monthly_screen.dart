@@ -41,7 +41,7 @@ class _MonthlyScreen extends State<MonthlyScreen> {
     super.initState();
     _date = DateTime(widget.date.year, widget.date.month, 1);
     _list = widget.list;
-    _weekdays = CalendarUtil.getWeekdays(_date, companyHolidays: widget.companyHolidays);
+    _weekdays = CalendarUtil.getWeekdays(_date, customHolidays: widget.companyHolidays);
     _calculate();
     _createEstimations();
   }
@@ -123,7 +123,7 @@ class _MonthlyScreen extends State<MonthlyScreen> {
                         widget.provider.list(_date).then((v) {
                           setState(() {
                             _list = v;
-                            _weekdays = CalendarUtil.getWeekdays(_date, companyHolidays: widget.companyHolidays);
+                            _weekdays = CalendarUtil.getWeekdays(_date, customHolidays: widget.companyHolidays);
                             _calculate();
                             _createEstimations();
                             _monthlyListKey.currentState.update(_list, _estimations);
@@ -140,7 +140,7 @@ class _MonthlyScreen extends State<MonthlyScreen> {
                         widget.provider.list(_date).then((v) {
                           setState(() {
                             _list = v;
-                            _weekdays = CalendarUtil.getWeekdays(_date, companyHolidays: widget.companyHolidays);
+                            _weekdays = CalendarUtil.getWeekdays(_date, customHolidays: widget.companyHolidays);
                             _calculate();
                             _createEstimations();
                             _monthlyListKey.currentState.update(_list, _estimations);

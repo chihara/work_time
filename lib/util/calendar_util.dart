@@ -6,15 +6,15 @@ class CalendarUtil {
 
   // 指定した月の平日のみのリストを取得する
   static List<DateTime> getWeekdays(DateTime date, {
-    List<String> companyHolidays = const [],
+    List<String> customHolidays = const [],
   }) {
-    DateTime day = DateTime(date.year, date.month, 1, 0, 0, 0);
+    DateTime day = DateTime(date.year, date.month, 1);
     List<DateTime> list = [];
     for (int i = 0; i < 31; ++i) {
       if (DateTime.saturday != day.weekday &&
           DateTime.sunday != day.weekday &&
           !isNationalHoliday(day) &&
-          !companyHolidays.contains(DateFormat('yyyy/MM/dd').format(day))) {
+          !customHolidays.contains(DateFormat('yyyy/MM/dd').format(day))) {
         list.add(day);
       }
       day = DateTime(day.year, day.month, day.day + 1);
@@ -23,6 +23,29 @@ class CalendarUtil {
       }
     }
     return list;
+  }
+
+  // 今日の0時ちょうどのDateTimeを取得する
+  static DateTime getToday() {
+    return DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+  }
+
+  // 30日後までを検索して指定日の次の平日を取得する
+  // 見つからなかった場合は指定日がそのまま返る
+  static DateTime getNextWeekday(DateTime date, {
+    List<String> customHolidays = const [],
+  }) {
+    DateTime day = DateTime(date.year, date.month, date.day);
+    for (int i = 0; i <= 30; ++i) {
+      day = DateTime(day.year, day.month, day.day + 1);
+      if (DateTime.saturday != day.weekday &&
+          DateTime.sunday != day.weekday &&
+          !isNationalHoliday(day) &&
+          !customHolidays.contains(DateFormat('yyyy/MM/dd').format(day))) {
+        return day;
+      }
+    }
+    return date;
   }
 
   // 年・月の表示文字列を取得する
