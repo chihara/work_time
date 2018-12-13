@@ -64,12 +64,14 @@ class _MonthlyScreen extends State<MonthlyScreen> {
           )
         ]
       ),
+      backgroundColor: Colors.white,
     );
   }
 
   // 集計ペインwidgetを構築する
   Widget _buildAggregatePane() {
     return Material(
+      color: Colors.white,
       elevation: 4.0,
       child: Container(
         height: 150.0,
@@ -82,77 +84,8 @@ class _MonthlyScreen extends State<MonthlyScreen> {
                 fontSize: 18.0
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: <Widget>[
-                Text(
-                  '${_list.length} / ${_weekdays.length} days',
-                  style: TextStyle(
-                    fontSize: 18.0
-                  ),
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: <Widget>[
-                    Difference(
-                      value: _surplus
-                    ),
-                    Text(
-                      '$_sum h',
-                      style: TextStyle(
-                        fontSize: 18.0
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    IconButton(
-                      icon: Icon(Icons.chevron_left),
-                      color: Colors.black45,
-                      onPressed: () {
-                        _date = DateTime(_date.year, _date.month - 1, _date.day);
-                        widget.provider.list(_date).then((v) {
-                          setState(() {
-                            _list = v;
-                            _weekdays = CalendarUtil.getWeekdays(_date, customHolidays: widget.companyHolidays);
-                            _calculate();
-                            _createEstimations();
-                            _monthlyListKey.currentState.update(_list, _estimations);
-                            _monthlyListKey.currentState.scrollToTop();
-                          });
-                        });
-                      },
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.chevron_right),
-                      color: Colors.black45,
-                      onPressed: () {
-                        _date = DateTime(_date.year, _date.month + 1, _date.day);
-                        widget.provider.list(_date).then((v) {
-                          setState(() {
-                            _list = v;
-                            _weekdays = CalendarUtil.getWeekdays(_date, customHolidays: widget.companyHolidays);
-                            _calculate();
-                            _createEstimations();
-                            _monthlyListKey.currentState.update(_list, _estimations);
-                            _monthlyListKey.currentState.scrollToTop();
-                          });
-                        });
-                      },
-                    )
-                  ],
-                ),
-              ],
-            ),
+            _buildMonthlySummary(),
+            _buildButtonsMoveToOtherMonth(),
             Center(
               child: _buildCircularChart(),
             ),
@@ -242,5 +175,90 @@ class _MonthlyScreen extends State<MonthlyScreen> {
       ));
     }
     return <CircularStackEntry>[CircularStackEntry(stack)];
+  }
+
+  Widget _buildMonthlySummary() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: <Widget>[
+        Text(
+          '${_list.length} / ${_weekdays.length} days',
+          style: TextStyle(
+              fontSize: 18.0
+          ),
+        ),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: <Widget>[
+            Difference(
+                value: _surplus
+            ),
+            Text(
+              '$_sum h',
+              style: TextStyle(
+                  fontSize: 18.0
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildButtonsMoveToOtherMonth() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            IconButton(
+              icon: Icon(Icons.chevron_left),
+              color: Colors.black45,
+              onPressed: () {
+                _moveToPreviousMonth();
+              },
+            ),
+            IconButton(
+              icon: Icon(Icons.chevron_right),
+              color: Colors.black45,
+              onPressed: () {
+                _moveToNextMonth();
+              },
+            )
+          ],
+        ),
+      ],
+    );
+  }
+
+  _moveToNextMonth() {
+    _date = DateTime(_date.year, _date.month + 1, _date.day);
+    widget.provider.list(_date).then((v) {
+      setState(() {
+        _list = v;
+        _weekdays = CalendarUtil.getWeekdays(_date, customHolidays: widget.companyHolidays);
+        _calculate();
+        _createEstimations();
+        _monthlyListKey.currentState.update(_list, _estimations);
+        _monthlyListKey.currentState.scrollToTop();
+      });
+    });
+  }
+
+  _moveToPreviousMonth() {
+    _date = DateTime(_date.year, _date.month - 1, _date.day);
+    widget.provider.list(_date).then((v) {
+      setState(() {
+        _list = v;
+        _weekdays = CalendarUtil.getWeekdays(_date, customHolidays: widget.companyHolidays);
+        _calculate();
+        _createEstimations();
+        _monthlyListKey.currentState.update(_list, _estimations);
+        _monthlyListKey.currentState.scrollToTop();
+      });
+    });
   }
 }

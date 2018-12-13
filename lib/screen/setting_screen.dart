@@ -28,6 +28,7 @@ class _SettingScreen extends State<SettingScreen> {
         ),
         bottomNavigationBar: _buildBottomNavigationBar(),
         body: _buildBody(context),
+        backgroundColor: Colors.white,
       ),
     );
   }
@@ -45,7 +46,6 @@ class _SettingScreen extends State<SettingScreen> {
         valueIndicatorTextStyle: TextStyle(color: Colors.white)
     );
     return Container(
-      color: Colors.white,
       constraints: BoxConstraints.expand(),
       child: SingleChildScrollView(
         child: Container(
@@ -156,26 +156,32 @@ class _SettingScreen extends State<SettingScreen> {
       },
     );
     if (TargetPlatform.iOS == Theme.of(context).platform) {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          IconButton(
-            icon: Icon(Icons.close),
-            onPressed: () {
-              _settings.load(() {
-                Navigator.pop(context);
-              });
-            },
-          ),
-          applyButton,
-        ],
+      return Container(
+        color: Colors.black.withAlpha(8),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            IconButton(
+              icon: Icon(Icons.close),
+              onPressed: () {
+                _settings.load(() {
+                  Navigator.pop(context);
+                });
+              },
+            ),
+            applyButton,
+          ],
+        ),
       );
     } else {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: <Widget>[
-          applyButton,
-        ],
+      return Container(
+        color: Colors.black.withAlpha(8),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: <Widget>[
+            applyButton,
+          ],
+        ),
       );
     }
   }

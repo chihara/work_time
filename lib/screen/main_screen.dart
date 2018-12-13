@@ -48,59 +48,32 @@ class _MainScreen extends State<MainScreen> {
       appBar: AppBar(
         title: Text('WorkTime'),
       ),
-      bottomNavigationBar: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          IconButton(
-            icon: Icon(Icons.list),
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(
-                  builder: (context) => MonthlyScreen(_date, _list, _companyHolidays, _workingProvider)
-              ));
-            },
-          ),
-          IconButton(
-            icon: Icon(Icons.settings),
-            onPressed: () async {
-              final event = await Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => SettingScreen()
-                )
-              );
-              if (null != event && 'saved' == event) {
-                _defaultTime = <String, double>{
-                  Working.START: _settings.start,
-                  Working.END: _settings.end,
-                  Working.REST: _settings.rest,
-                };
-                _refresh();
-              }
-            },
-          ),
-        ],
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.only(top: 30.0),
-            child: Calendar(
-              onDateSelected: (date) {
-                _date = date;
-                _refresh();
-              }
+      bottomNavigationBar: _buildBottomNavigationBar(),
+      body: Container(
+        color: Colors.black.withAlpha(4),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.only(top: 30.0),
+              child: Calendar(
+                onDateSelected: (date) {
+                  _date = date;
+                  _refresh();
+                }
+              ),
             ),
-          ),
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              _buildHolidayRibbon(),
-              _buildInputPane(context),
-            ],
-          ),
-        ],
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                _buildHolidayRibbon(),
+                _buildInputPane(context),
+              ],
+            ),
+          ],
+        ),
       ),
+      backgroundColor: Colors.white,
     );
   }
 
@@ -293,6 +266,44 @@ class _MainScreen extends State<MainScreen> {
             ),
           ),
         )
+      ),
+    );
+  }
+
+  Widget _buildBottomNavigationBar() {
+    return Container(
+      color: Colors.black.withAlpha(8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          IconButton(
+            icon: Icon(Icons.list),
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(
+                  builder: (context) => MonthlyScreen(_date, _list, _companyHolidays, _workingProvider)
+              ));
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.settings),
+            onPressed: () async {
+              final event = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => SettingScreen()
+                  )
+              );
+              if (null != event && 'saved' == event) {
+                _defaultTime = <String, double>{
+                  Working.START: _settings.start,
+                  Working.END: _settings.end,
+                  Working.REST: _settings.rest,
+                };
+                _refresh();
+              }
+            },
+          ),
+        ],
       ),
     );
   }
