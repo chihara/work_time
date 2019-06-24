@@ -48,8 +48,8 @@ class CalendarUtil {
     return date;
   }
 
-  // 年・月の表示文字列を取得する
-  static String getYearAndMonth(DateTime date) {
+  // 月の表示文字列を取得する
+  static String getMonth(DateTime date) {
     final month = [
       'January',
       'February',
@@ -65,10 +65,15 @@ class CalendarUtil {
       'December'
     ];
     if (1 <= date.month && date.month <= 12) {
-      return '${month[date.month - 1]} ${date.year}';
+      return '${month[date.month - 1]}';
     } else {
       return '';
     }
+  }
+
+  // 年・月の表示文字列を取得する
+  static String getYearAndMonth(DateTime date) {
+    return '${getMonth(date)} ${date.year}';
   }
 
   // 祝日かどうかを判定する
@@ -120,6 +125,9 @@ class CalendarUtil {
     "2019/02/11",
     "2019/03/21",
     "2019/04/29",
+    "2019/04/30",
+    "2019/05/01",
+    "2019/05/02",
     "2019/05/03",
     "2019/05/04",
     "2019/05/05",
