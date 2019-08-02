@@ -15,11 +15,13 @@ class Working {
   static const String DURATION = 'duration';
   static const String HOLIDAY = 'holiday';
   static const String COMPANY_HOLIDAY = 'company_holiday';
+  static const String DATE = 'date';
 
   int id;
   int year;
   int month;
   int day;
+  DateTime date;
   double start;
   double end;
   double rest;
@@ -37,6 +39,7 @@ class Working {
       this.rest,
   ) {
     duration = end - start - rest;
+    date = DateTime(year, month, day);
   }
 
   Working.fromDateTime(DateTime datetime, {
@@ -45,6 +48,7 @@ class Working {
     year = datetime.year;
     month = datetime.month;
     day = datetime.day;
+    date = datetime;
     if (null != time) {
       start = time[START];
       end = time[END];
@@ -61,6 +65,7 @@ class Working {
     year = map[YEAR];
     month = map[MONTH];
     day = map[DAY];
+    date = DateFormat('yyyy/MM/dd').parse(map[DATE]);
     start = map[START];
     end = map[END];
     rest = map[REST];
@@ -90,6 +95,7 @@ class Working {
       DURATION: duration,
       HOLIDAY: holiday.toString(),
       COMPANY_HOLIDAY: companyHoliday.toString(),
+      DATE: DateFormat('yyyy/MM/dd').format(date),
     };
     if (id != null) {
       map[ID] = id;
@@ -116,6 +122,7 @@ class WorkingProvider {
             ${Working.DURATION} REAL,
             ${Working.HOLIDAY} TEXT,
             ${Working.COMPANY_HOLIDAY} TEXT,
+            ${Working.DATE} TEXT,
           UNIQUE (
             ${Working.YEAR},
             ${Working.MONTH},
@@ -133,6 +140,10 @@ class WorkingProvider {
       await db.update(Working.TABLE_NAME, {Working.COMPANY_HOLIDAY: 'false'},
         where: '${Working.COMPANY_HOLIDAY} IS NULL'
       );
+    }
+    if (4 > oldVersion && 4 <= newVersion) {
+      await db.execute('ALTER TABLE ${Working.TABLE_NAME} ADD ${Working.DATE} TEXT');
+      await db.execute("UPDATE ${Working.TABLE_NAME} SET ${Working.DATE}=${Working.YEAR}||'/'||substr('00'||${Working.MONTH}, -2, 2)||'/'||substr('00'||${Working.DAY}, -2, 2)");
     }
   }
 
@@ -161,6 +172,19 @@ class WorkingProvider {
     List<Working> list = [];
     maps.forEach((it) => list.add(Working.fromMap(it)));
     return list;
+  }
+
+  Future<Map<DateTime, List>> listAsCalendarEvent(DateTime first, DateTime last) async {
+    List<Map> maps = await _db.query(Working.TABLE_NAME,
+        where: '${Working.DATE} >= ? AND ${Working.DATE} <= ? AND ${Working.COMPANY_HOLIDAY} = ?',
+        whereArgs: [DateFormat('yyyy/MM/dd').format(first), DateFormat('yyyy/MM/dd').format(last), 'false'],
+        orderBy: '${Working.DAY} ASC');
+    Map map = Map<DateTime, List>();
+    maps?.forEach((it) {
+      Working working = Working.fromMap(it);
+      map[DateTime(working.year, working.month, working.day)] = ["${working.duration}"];
+    });
+    return map;
   }
 
   Future<List> companyHolidays() async {

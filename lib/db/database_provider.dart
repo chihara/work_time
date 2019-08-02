@@ -24,7 +24,7 @@ class DatabaseProvider {
       if (null == _db) {
         _db = await openDatabase(
           join(path, FILE_NAME),
-          version: 3,
+          version: 4,
           onCreate: (Database db, int version) async {
             WorkingProvider.create(db, version);
           },

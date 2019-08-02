@@ -81,6 +81,14 @@ class CalendarUtil {
     return _nationalHolidays.contains(DateFormat('yyyy/MM/dd').format(date));
   }
 
+  static Map<DateTime, List> getNationalHoliday() {
+    Map map = Map<DateTime, List>();
+    _nationalHolidays.forEach((it) => {
+      map[DateFormat('yyyy/MM/dd').parse(it)] = ['National Holiday']
+    });
+    return map;
+  }
+
   // 拾ってきた日本の祝日データ
   static List<String> _nationalHolidays = [
     "2017/01/01",
@@ -138,6 +146,7 @@ class CalendarUtil {
     "2019/09/16",
     "2019/09/23",
     "2019/10/14",
+    "2019/10/22",
     "2019/11/03",
     "2019/11/04",
     "2019/11/23",

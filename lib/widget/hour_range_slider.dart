@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'package:flutter_range_slider/flutter_range_slider.dart';
+import 'package:flutter_range_slider/flutter_range_slider.dart' as frs;
 import 'package:intl/intl.dart';
 
 typedef void OnChanged(double lower, double upper);
@@ -84,7 +84,7 @@ class _HourRangeSlider extends State<HourRangeSlider> {
   }
 
   Widget _buildRangeSlider() {
-    var slider = RangeSlider(
+    var slider = frs.RangeSlider(
       min: widget.min,
       max: widget.max,
       lowerValue: _lowerValue,

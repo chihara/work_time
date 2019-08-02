@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'package:flutter_calendar/flutter_calendar.dart';
+import 'package:table_calendar/table_calendar.dart';
 import 'package:working/db/database_provider.dart';
 import 'package:working/db/working.dart';
 import 'package:working/screen/monthly_screen.dart';
@@ -24,6 +24,9 @@ class _MainScreen extends State<MainScreen> {
   List<Working> _list;
   List<String> _companyHolidays;
   Map<String, double> _defaultTime;
+  Map<DateTime, List> _events = {};
+  DateTime _visibleFirstDate;
+  DateTime _visibleLastDate;
 
   @override
   void initState() {
@@ -34,6 +37,8 @@ class _MainScreen extends State<MainScreen> {
       Working.REST: _settings.rest,
     };
     _date = DateTime.now();
+    _visibleFirstDate = DateTime(_date.year, _date.month, 1);
+    _visibleLastDate = DateTime(_date.year, _date.month+1, 0);
     _working = Working.fromDateTime(_date, time: _defaultTime);
     DatabaseProvider.open(onOpened: () {
       _workingProvider = DatabaseProvider.getWorkingProvider();
@@ -49,31 +54,53 @@ class _MainScreen extends State<MainScreen> {
         title: Text('WorkTime'),
       ),
       bottomNavigationBar: _buildBottomNavigationBar(),
-      body: Container(
-        color: Colors.black.withAlpha(4),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.only(top: 30.0),
-              child: Calendar(
-                onDateSelected: (date) {
-                  _date = date;
-                  _refresh();
-                }
+      body: SingleChildScrollView(
+        child: Container(
+          color: Colors.black.withAlpha(4),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(top: 10.0),
+                child: _buildCalendar(),
               ),
-            ),
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                _buildHolidayRibbon(),
-                _buildInputPane(context),
-              ],
-            ),
-          ],
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  _buildHolidayRibbon(),
+                  _buildInputPane(context),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
       backgroundColor: Colors.white,
+    );
+  }
+
+  Widget _buildCalendar() {
+    return TableCalendar(
+      selectedDay: _date,
+      holidays: CalendarUtil.getNationalHoliday(),
+      events: _events,
+      initialCalendarFormat: CalendarFormat.twoWeeks,
+      onDaySelected: (date, _) {
+        setState(() {
+          _date = date;
+          _refresh();
+        });
+      },
+      onVisibleDaysChanged: (first, last, format) {
+        _visibleFirstDate = first;
+        _visibleLastDate = last;
+        _workingProvider?.listAsCalendarEvent(first, last)?.then((events) {
+          setState(() {
+            _events = events;
+          });
+        });
+      },
+      calendarStyle: CalendarStyle(markersColor: Colors.cyan),
     );
   }
 
@@ -172,13 +199,13 @@ class _MainScreen extends State<MainScreen> {
     );
     return Container(
       height: 115.0,
-      padding: EdgeInsets.symmetric(horizontal: 16.0),
+      padding: EdgeInsets.symmetric(horizontal: 8.0),
       child: HourRangeSlider(
         lowerValue: _working.start,
         upperValue: _working.end,
         min: 8.0,
         max: 24.0,
-        width: 340.0,
+        width: 300.0,
         label: 'Work ${_working.duration.toStringAsFixed(2)} h',
         divisions: 64,
         sliderTheme: _working.id == null ? null : theme,
@@ -197,7 +224,7 @@ class _MainScreen extends State<MainScreen> {
       value: _working.rest,
       min: 0.0,
       max: 4.0,
-      width: 230.0,
+      width: 240.0,
       label: 'Rest ${_working.rest.toStringAsFixed(2)} h',
       divisions: 16,
       sliderTheme: SliderThemeData.fromPrimaryColors(
@@ -322,6 +349,13 @@ class _MainScreen extends State<MainScreen> {
     _workingProvider?.list(_date)?.then((list) {
       _list = list;
     });
+    if (null != _visibleFirstDate && null != _visibleLastDate) {
+      _workingProvider?.listAsCalendarEvent(_visibleFirstDate, _visibleLastDate)?.then((events) {
+        setState(() {
+          _events = events;
+        });
+      });
+    }
   }
   
   _getCompanyHolidays() {
