@@ -4,7 +4,7 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:working/db/database_provider.dart';
 import 'package:working/db/working.dart';
 import 'package:working/screen/monthly_screen.dart';
-import 'package:working/screen/setting_screen.dart';
+import 'package:working/screen/setting/setting_screen.dart';
 import 'package:working/settings/settings.dart';
 import 'package:working/util/calendar_util.dart';
 import 'package:working/widget/hour_range_slider.dart';

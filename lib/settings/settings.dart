@@ -18,12 +18,12 @@ class Settings {
   double end;
   double rest;
 
-  Settings._internal() {
+  Settings._init() {
     _pref = SharedPreferences.getInstance();
   }
 
   factory Settings() {
-    if (null == _settings) _settings = Settings._internal();
+    if (null == _settings) _settings = Settings._init();
     return _settings;
   }
 
